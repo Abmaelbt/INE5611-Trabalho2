@@ -41,6 +41,7 @@ int numProcesses = 0;
 // configura o tamanho de memória e dos quadros
 // aloca e inicializa a memoria fisica
 // cria a lista encadeada de quadros livres
+
 void initializeMemory(int memSize, int fSize) {
     physicalMemorySize = memSize;
     frameSize = fSize;
@@ -72,6 +73,7 @@ int allocateFrame() {
     return frameNumber;
 }
 
+
 void freeFrame(int frameNumber) {
     FrameNode *node = (FrameNode *)malloc(sizeof(FrameNode));
     node->frameNumber = frameNumber;
@@ -79,7 +81,12 @@ void freeFrame(int frameNumber) {
     freeFrames = node;
 }
 
-
+// Verifica se o tamanho do processo é válido.
+// Calcula o número de páginas necessárias.
+// Inicializa a memória lógica com valores aleatórios.
+// Aloca quadros e configura a tabela de páginas.
+// Copia os dados da memória lógica para a memória física.
+// Adiciona o processo à lista de processos.
 void createProcess(int processID, int processSize) {
     if (processSize > maxProcessSize) {
         printf("Erro: Tamanho do processo excede o máximo permitido.\n");
@@ -127,6 +134,8 @@ void createProcess(int processID, int processSize) {
     printf("Processo %d criado com sucesso.\n", processID);
 }
 
+// Conta e exibe a porcentagem de memória livre.
+// Exibe o conteúdo de cada quadro na memória física.
 void displayMemory() {
     int freeFramesCount = 0;
     FrameNode *node = freeFrames;
@@ -145,6 +154,8 @@ void displayMemory() {
     }
 }
 
+// Procura pelo processo e exibe sua tabela de páginas.
+// Se o processo não for encontrado, exibe uma mensagem de erro.
 void displayPageTable(int processID) {
     for (int i = 0; i < numProcesses; i++) {
         if (processes[i].processID == processID) {
@@ -159,15 +170,18 @@ void displayPageTable(int processID) {
     printf("Erro: Processo %d não encontrado.\n", processID);
 }
 
+// Usuário informa as configurações iniciais de memória, quadros e processos
+// Chama a tela relacionada conforme a seleção do usuário
+
 int main() {
     int choice, processID, processSize;
 
     // Configurar tamanhos
-    printf("Digite o tamanho da memória física (em bytes): ");
+    printf("Digite o tamanho da memoria fisica (em bytes): ");
     scanf("%d", &physicalMemorySize);
-    printf("Digite o tamanho do quadro/página (em bytes): ");
+    printf("Digite o tamanho do quadro/pagina (em bytes): ");
     scanf("%d", &frameSize);
-    printf("Digite o tamanho máximo de um processo (em bytes): ");
+    printf("Digite o tamanho maximo de um processo (em bytes): ");
     scanf("%d", &maxProcessSize);
 
     // Inicializar memória
@@ -175,11 +189,11 @@ int main() {
 
     while (true) {
         printf("\nMenu:\n");
-        printf("1. Visualizar memória\n");
+        printf("1. Visualizar memoria\n");
         printf("2. Criar processo\n");
-        printf("3. Visualizar tabela de páginas\n");
+        printf("3. Visualizar tabela de paginas\n");
         printf("4. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &choice);
 
         switch (choice) {
@@ -201,7 +215,7 @@ int main() {
             case 4:
                 exit(0);
             default:
-                printf("Opção inválida. Tente novamente.\n");
+                printf("Opcao invalida. Tente novamente.\n");
         }
     }
 
