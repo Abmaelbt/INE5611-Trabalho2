@@ -30,7 +30,7 @@ typedef struct FrameNode {
 } FrameNode;
 
 unsigned char *physicalMemory;
-FrameNode *freeFrames;
+FrameNode *firstFreeFrame;
 int numFrames;
 int frameSize;
 int physicalMemorySize;
@@ -50,25 +50,25 @@ void initializeMemory(int memSize, int fSize) {
     memset(physicalMemory, 0, physicalMemorySize);
 
     // cria um novo nó para cada quadro disponivel
-    freeFrames = NULL;
+    firstFreeFrame = NULL;
     for (int i=numFrames - 1; i >= 0; i--) {
         FrameNode *node = (FrameNode *)malloc(sizeof(FrameNode)); // aloca memória para um novo nó
         node->frameNumber = i; // atribui o numero do quadro ao nó
-        node->next = freeFrames;
-        freeFrames = node;
+        node->next = firstFreeFrame;
+        firstFreeFrame = node;
     }
 }
 
 // verifica se há quadros livres
 // remove um quadro da lista de quadros livres e retorna seu numero 
 int allocateFrame() {
-    if (freeFrames == NULL) {
+    if (firstFreeFrame == NULL) {
         return -1;
     }
 
     // Contar o número de quadros livres
     int count = 0;
-    FrameNode *current = freeFrames;
+    FrameNode *current = firstFreeFrame;
     while (current != NULL) {
         count++;
         current = current->next;
@@ -79,7 +79,7 @@ int allocateFrame() {
 
     // Percorrer a lista até o quadro selecionado
     FrameNode *prev = NULL;
-    current = freeFrames;
+    current = firstFreeFrame;
     for (int i = 0; i < randomIndex; i++) {
         prev = current;
         current = current->next;
@@ -88,7 +88,7 @@ int allocateFrame() {
     // Remover o quadro selecionado da lista
     int frameNumber = current->frameNumber;
     if (prev == NULL) { // Se o quadro está na cabeça da lista
-        freeFrames = current->next;
+        firstFreeFrame = current->next;
     } else {
         prev->next = current->next;
     }
@@ -155,7 +155,7 @@ void createProcess(int processID, int processSize) {
 // Exibe o conteúdo de cada quadro na memória física.
 void displayMemory() {
     int freeFramesCount = 0;
-    FrameNode *node = freeFrames;
+    FrameNode *node = firstFreeFrame;
     while (node != NULL) {
         freeFramesCount++;
         node = node->next;
