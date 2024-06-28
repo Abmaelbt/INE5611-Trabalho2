@@ -66,20 +66,37 @@ int allocateFrame() {
         return -1;
     }
 
-    int frameNumber = freeFrames->frameNumber;
-    FrameNode *temp = freeFrames;
-    freeFrames = freeFrames->next;
-    free(temp);
+    // Contar o número de quadros livres
+    int count = 0;
+    FrameNode *current = freeFrames;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    // Selecionar um índice aleatório
+    int randomIndex = rand() % count;
+
+    // Percorrer a lista até o quadro selecionado
+    FrameNode *prev = NULL;
+    current = freeFrames;
+    for (int i = 0; i < randomIndex; i++) {
+        prev = current;
+        current = current->next;
+    }
+
+    // Remover o quadro selecionado da lista
+    int frameNumber = current->frameNumber;
+    if (prev == NULL) { // Se o quadro está na cabeça da lista
+        freeFrames = current->next;
+    } else {
+        prev->next = current->next;
+    }
+    free(current);
+
     return frameNumber;
 }
 
-
-void freeFrame(int frameNumber) {
-    FrameNode *node = (FrameNode *)malloc(sizeof(FrameNode));
-    node->frameNumber = frameNumber;
-    node->next = freeFrames;
-    freeFrames = node;
-}
 
 // Verifica se o tamanho do processo é válido.
 // Calcula o número de páginas necessárias.
